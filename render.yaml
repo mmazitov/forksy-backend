@@ -3,7 +3,7 @@ services:
     name: forksy-api
     runtime: node
     plan: free
-    buildCommand: yarn --frozen-lockfile install && yarn prisma:generate && yarn build
+    buildCommand: yarn --frozen-lockfile install; yarn prisma:generate; yarn build
     startCommand: yarn start
     envVars:
       - key: NODE_ENV
