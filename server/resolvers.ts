@@ -22,10 +22,6 @@ export const resolvers = {
 			args: { id: string },
 			context: Context,
 		) => {
-			if (!context.userId) {
-				throw new Error('Not authenticated');
-			}
-
 			const product = await context.prisma.product.findUnique({
 				where: { id: args.id },
 			});
@@ -39,6 +35,7 @@ export const resolvers = {
 				search?: string;
 				limit?: number;
 				offset?: number;
+				userId?: string;
 			},
 			context: Context,
 		) => {
@@ -48,6 +45,7 @@ export const resolvers = {
 					...(args.search && {
 						name: { contains: args.search, mode: 'insensitive' },
 					}),
+					...(args.userId && { userId: args.userId }),
 				},
 				take: args.limit,
 				skip: args.offset || 0,
