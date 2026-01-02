@@ -17,6 +17,6 @@
 		"allowSyntheticDefaultImports": true,
 		"types": ["node"]
 	},
-	"include": ["server/**/*", "api/**/*", "prisma/**/*"],
+	"include": ["server/**/*", "prisma/**/*"],
 	"exclude": ["node_modules", "dist"]
 }
