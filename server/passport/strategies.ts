@@ -2,7 +2,7 @@ import passport from 'passport';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
 import { Strategy as GitHubStrategy } from 'passport-github2';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import { prisma } from '../context';
+import { prisma } from '../context.js';
 
 passport.use(
 	new GoogleStrategy(
