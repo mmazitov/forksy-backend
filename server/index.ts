@@ -1,6 +1,7 @@
 import { ApolloServer } from '@apollo/server';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { expressMiddleware } from '@as-integrations/express4';
+import bodyParser from 'body-parser';
 import cors from 'cors';
 import type { Request } from 'express';
 import express from 'express';
@@ -48,7 +49,7 @@ const startServer = async () => {
 			credentials: true,
 		})
 	);
-	app.use(express.json());
+	app.use(bodyParser.json());
 
 	// Session setup для Passport
 	app.use(
@@ -85,18 +86,7 @@ const startServer = async () => {
 	// GraphQL endpoint
 	app.use(
 		'/graphql',
-		cors({
-			origin: (origin, callback) => {
-				if (!origin) return callback(null, true);
-				if (allowedOrigins.includes(origin)) {
-					callback(null, true);
-				} else {
-					callback(new Error('Not allowed by CORS'));
-				}
-			},
-			credentials: true,
-		}),
-		express.json(),
+		bodyParser.json(),
 		expressMiddleware(server, {
 			context: async ({ req }: { req: Request }) => createContext({ req }),
 		})
