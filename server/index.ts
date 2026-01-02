@@ -27,29 +27,12 @@ const startServer = async () => {
 
 	await server.start();
 
-	// Middleware
+	// Middleware для non-GraphQL routes
 	const allowedOrigins = [
 		process.env.CLIENT_URL || 'http://localhost:5173',
-		'https://forksy.vercel.app', // Production frontend
-		'http://localhost:5173', // Local development
+		'https://forksy.vercel.app',
+		'http://localhost:5173',
 	];
-
-	app.use(
-		cors({
-			origin: (origin, callback) => {
-				// Allow requests with no origin (mobile apps, Postman, etc.)
-				if (!origin) return callback(null, true);
-
-				if (allowedOrigins.includes(origin)) {
-					callback(null, true);
-				} else {
-					callback(new Error('Not allowed by CORS'));
-				}
-			},
-			credentials: true,
-		})
-	);
-	app.use(bodyParser.json());
 
 	// Session setup для Passport
 	app.use(
@@ -59,7 +42,7 @@ const startServer = async () => {
 			saveUninitialized: false,
 			cookie: {
 				secure: process.env.NODE_ENV === 'production',
-				maxAge: 24 * 60 * 60 * 1000, // 24 години
+				maxAge: 24 * 60 * 60 * 1000,
 			},
 		})
 	);
@@ -83,9 +66,13 @@ const startServer = async () => {
 	// OAuth маршрути
 	app.use('/auth', oauthRouter);
 
-	// GraphQL endpoint
+	// GraphQL endpoint - CORS і body parser тільки тут
 	app.use(
 		'/graphql',
+		cors<cors.CorsRequest>({
+			origin: allowedOrigins,
+			credentials: true,
+		}),
 		bodyParser.json(),
 		expressMiddleware(server, {
 			context: async ({ req }: { req: Request }) => createContext({ req }),
