@@ -49,6 +49,8 @@ model User {
   name       String?
   password   String?
   phone      String?
+  avatar     String?
+  role       String    @default("user") // "user" or "admin"
   // Auth provider
   googleId   String?
   facebookId String?

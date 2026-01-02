@@ -4,6 +4,12 @@ import { Context } from './context.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
 
+
+const isAdmin = async (userId: string, prisma: Context['prisma']) => {
+	const user = await prisma.user.findUnique({ where: { id: userId } });
+	return user?.role === 'admin';
+};
+
 export const resolvers = {
 	Query: {
 		me: async (_parent: unknown, _args: unknown, context: Context) => {
@@ -185,13 +191,18 @@ export const resolvers = {
 				throw new Error('Not authenticated');
 			}
 
-			// Check ownership
+			// Check ownership or admin rights
 			const existing = await context.prisma.product.findUnique({
 				where: { id: args.id },
 			});
 
-			if (!existing || existing.userId !== context.userId) {
+			if (!existing) {
 				throw new Error('Product not found');
+			}
+
+			const userIsAdmin = await isAdmin(context.userId, context.prisma);
+			if (existing.userId !== context.userId && !userIsAdmin) {
+				throw new Error('Not authorized to edit this product');
 			}
 
 			const product = await context.prisma.product.update({
@@ -221,13 +232,18 @@ export const resolvers = {
 				throw new Error('Not authenticated');
 			}
 
-			// Check ownership
+			// Check ownership or admin rights
 			const existing = await context.prisma.product.findUnique({
 				where: { id: args.id },
 			});
 
-			if (!existing || existing.userId !== context.userId) {
+			if (!existing) {
 				throw new Error('Product not found');
+			}
+
+			const userIsAdmin = await isAdmin(context.userId, context.prisma);
+			if (existing.userId !== context.userId && !userIsAdmin) {
+				throw new Error('Not authorized to delete this product');
 			}
 
 			const product = await context.prisma.product.delete({
