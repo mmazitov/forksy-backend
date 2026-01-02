@@ -67,12 +67,25 @@ const startServer = async () => {
 	app.use(passport.initialize());
 	app.use(passport.session());
 
+	// Health check endpoint
+	app.get('/', (req, res) => {
+		res.json({
+			status: 'ok',
+			message: 'Forksy API is running',
+			endpoints: {
+				graphql: '/graphql',
+				auth: '/auth',
+			},
+		});
+	});
+
 	// OAuth маршрути
 	app.use('/auth', oauthRouter);
 
 	// GraphQL endpoint
 	app.use(
 		'/graphql',
+		express.json(),
 		expressMiddleware(server, {
 			context: async ({ req }: { req: Request }) => createContext({ req }),
 		})

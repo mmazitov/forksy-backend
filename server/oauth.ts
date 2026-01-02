@@ -6,6 +6,18 @@ const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 
+// Info endpoint
+router.get('/', (req, res) => {
+	res.json({
+		message: 'OAuth Authentication',
+		providers: {
+			google: '/auth/google-auth',
+			github: '/auth/github-auth',
+			facebook: '/auth/facebook-auth',
+		},
+	});
+});
+
 const handleOAuthCallback =
 	(provider: string) => (req: any, res: any, next: any) => {
 		passport.authenticate(
