@@ -23,16 +23,16 @@ services:
       - key: GOOGLE_CLIENT_SECRET
         sync: false
       - key: GOOGLE_CALLBACK_URL
-        value: https://forksy-api.onrender.com/auth/google/callback
+        value: https://forksy-backend.onrender.com/auth/google/callback
       - key: GITHUB_CLIENT_ID
         sync: false
       - key: GITHUB_CLIENT_SECRET
         sync: false
       - key: GITHUB_CALLBACK_URL
-        value: https://forksy-api.onrender.com/auth/github/callback
+        value: https://forksy-backend.onrender.com/auth/github/callback
       - key: FACEBOOK_APP_ID
         sync: false
       - key: FACEBOOK_APP_SECRET
         sync: false
       - key: FACEBOOK_CALLBACK_URL
-        value: https://forksy-api.onrender.com/auth/facebook/callback
+        value: https://forksy-backend.onrender.com/auth/facebook/callback
