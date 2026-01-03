@@ -7,14 +7,16 @@ WORKDIR /app
 COPY package*.json ./
 COPY yarn.lock* ./
 
+# Copy prisma schema BEFORE install (needed for postinstall script)
+COPY prisma ./prisma
+
 # Install dependencies
 RUN yarn install --frozen-lockfile
 
 # Copy source code
 COPY . .
 
-# Generate Prisma Client and build
-RUN yarn prisma:generate
+# Build TypeScript
 RUN yarn build
 
 # Production stage
@@ -26,14 +28,11 @@ WORKDIR /app
 COPY package*.json ./
 COPY yarn.lock* ./
 
-# Install production dependencies only
-RUN yarn install --production --frozen-lockfile
-
-# Copy prisma schema for runtime
+# Copy prisma schema BEFORE install
 COPY prisma ./prisma
 
-# Generate Prisma Client
-RUN yarn prisma:generate
+# Install production dependencies only
+RUN yarn install --production --frozen-lockfile
 
 # Copy built files from builder
 COPY --from=builder /app/dist ./dist

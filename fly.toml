@@ -1,11 +1,16 @@
+# fly.toml app configuration file generated for forksy-backend on 2026-01-03T15:21:26+02:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
 app = 'forksy-backend'
-primary_region = 'waw'
+primary_region = 'ams'
 
 [build]
 
 [env]
-  PORT = '8080'
   NODE_ENV = 'production'
+  PORT = '8080'
 
 [http_service]
   internal_port = 8080
@@ -22,5 +27,5 @@ primary_region = 'waw'
 
 [[vm]]
   memory = '256mb'
-  cpu_kind = 'shared'
   cpus = 1
+  memory_mb = 256

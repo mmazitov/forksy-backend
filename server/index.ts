@@ -78,13 +78,14 @@ const startServer = async () => {
 	);
 
 	const PORT = parseInt(process.env.PORT || '4000', 10);
+	const HOST = process.env.HOST || '0.0.0.0';
 
 	await new Promise<void>((resolve) =>
-		httpServer.listen({ port: PORT }, resolve)
+		httpServer.listen({ port: PORT, host: HOST }, resolve)
 	);
 
-	console.log(`🚀 Server ready at http://localhost:${PORT}/graphql`);
-	console.log(`🔐 OAuth endpoints at http://localhost:${PORT}/auth`);
+	console.log(`🚀 Server ready at http://${HOST}:${PORT}/graphql`);
+	console.log(`🔐 OAuth endpoints at http://${HOST}:${PORT}/auth`);
 };
 
 startServer().catch((err) => {
