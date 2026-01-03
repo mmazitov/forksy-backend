@@ -16,6 +16,7 @@ export const typeDefs = gql`
 		facebookId: String
 		createdAt: String!
 		updatedAt: String!
+		favoriteProducts: [Product!]!
 	}
 
 	type Product {
@@ -31,6 +32,7 @@ export const typeDefs = gql`
 		createdAt: String!
 		updatedAt: String!
 		userId: ID!
+		isFavorite: Boolean
 	}
 
 	type AuthPayload {
@@ -46,6 +48,7 @@ export const typeDefs = gql`
 			search: String
 			limit: Int
 			offset: Int
+		favoriteProducts: [Product!]!
 		): [Product!]!
 	}
 
@@ -81,6 +84,8 @@ export const typeDefs = gql`
 			protein: Float
 			description: String
 		): Product!
+		addToFavorites(productId: ID!): User!
+		removeFromFavorites(productId: ID!): User!
 		deleteProduct(id: ID!): Product!
 	}
 

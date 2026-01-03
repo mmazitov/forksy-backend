@@ -60,6 +60,28 @@ export const resolvers = {
 
 			return products;
 		},
+		favoriteProducts: async (
+			_parent: unknown,
+			_args: unknown,
+			context: Context,
+		) => {
+			if (!context.userId) {
+				throw new Error('Not authenticated');
+			}
+
+			const user = await context.prisma.user.findUnique({
+				where: { id: context.userId },
+				include: {
+					favoriteProducts: {
+						orderBy: {
+							createdAt: 'desc',
+						},
+					},
+				},
+			});
+
+			return user?.favoriteProducts || [];
+		},
 	},
 	Mutation: {
 		register: async (
@@ -251,6 +273,78 @@ export const resolvers = {
 			});
 
 			return product;
+		},
+		addToFavorites: async (
+			_parent: unknown,
+			args: { productId: string },
+			context: Context,
+		) => {
+			if (!context.userId) {
+				throw new Error('Not authenticated');
+			}
+
+			const product = await context.prisma.product.findUnique({
+				where: { id: args.productId },
+			});
+
+			if (!product) {
+				throw new Error('Product not found');
+			}
+
+			const user = await context.prisma.user.update({
+				where: { id: context.userId },
+				data: {
+					favoriteProducts: {
+						connect: { id: args.productId },
+					},
+				},
+				include: {
+					favoriteProducts: true,
+				},
+			});
+
+			return user;
+		},
+		removeFromFavorites: async (
+			_parent: unknown,
+			args: { productId: string },
+			context: Context,
+		) => {
+			if (!context.userId) {
+				throw new Error('Not authenticated');
+			}
+
+			const user = await context.prisma.user.update({
+				where: { id: context.userId },
+				data: {
+					favoriteProducts: {
+						disconnect: { id: args.productId },
+					},
+				},
+				include: {
+					favoriteProducts: true,
+				},
+			});
+
+			return user;
+		},
+	},
+	Product: {
+		isFavorite: async (parent: { id: string }, _args: unknown, context: Context) => {
+			if (!context.userId) {
+				return false;
+			}
+
+			const user = await context.prisma.user.findUnique({
+				where: { id: context.userId },
+				include: {
+					favoriteProducts: {
+						where: { id: parent.id },
+					},
+				},
+			});
+
+			return user?.favoriteProducts.length ? true : false;
 		},
 	},
 };
