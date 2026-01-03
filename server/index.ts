@@ -64,6 +64,7 @@ app.use('/auth', oauthRouter);
 const server = new ApolloServer({
 	typeDefs,
 	resolvers,
+	introspection: true, // Enable introspection for GraphQL codegen
 	plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 });
 
