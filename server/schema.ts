@@ -48,8 +48,8 @@ export const typeDefs = gql`
 			search: String
 			limit: Int
 			offset: Int
-		favoriteProducts: [Product!]!
 		): [Product!]!
+		favoriteProducts: [Product!]!
 	}
 
 	type Mutation {
