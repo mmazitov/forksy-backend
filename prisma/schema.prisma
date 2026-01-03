@@ -11,57 +11,63 @@ datasource db {
 }
 
 model Dish {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  name         String
-  description  String?
-  image        String?
-  category     String?
-  prepTime     Int?
-  servings     Int?
-  calories     Int?
-  ingredients  String[]
-  instructions String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  userId       String   @db.ObjectId
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  description   String?
+  image         String?
+  category      String?
+  prepTime      Int?
+  servings      Int?
+  calories      Int?
+  ingredients   String[]
+  instructions  String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  userId        String   @db.ObjectId
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  favoriteByIds String[] @db.ObjectId
+  favoriteBy    User[]   @relation("UserFavoriteDishes", fields: [favoriteByIds], references: [id])
 }
 
 model Product {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  category    String?
-  imageUrl    String?
-  calories    Int?
-  fat         Float?
-  carbs       Float?
-  protein     Float?
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  userId      String   @db.ObjectId
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  category      String?
+  imageUrl      String?
+  calories      Int?
+  fat           Float?
+  carbs         Float?
+  protein       Float?
+  description   String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  userId        String   @db.ObjectId
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  favoriteByIds String[] @db.ObjectId
+  favoriteBy    User[]   @relation("UserFavoriteProducts", fields: [favoriteByIds], references: [id])
 }
 
 model User {
-  id               String    @id @default(auto()) @map("_id") @db.ObjectId
-  email            String?   @unique
-  name             String?
-  password         String?
-  phone            String?
-  avatar           String?
-  role             String    @default("user") // "user" or "admin"
+  id                 String    @id @default(auto()) @map("_id") @db.ObjectId
+  email              String?   @unique
+  name               String?
+  password           String?
+  phone              String?
+  avatar             String?
+  role               String    @default("user") // "user" or "admin"
   // Auth provider
-  googleId         String?
-  facebookId       String?
-  githubId         String?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-  diet             String?
-  allergy          String[]
-  dislike          String[]
-  dishes           Dish[]
-  favoriteDishes   Dish[]    @relation("UserFavoriteDishes", references: [id])
-  products         Product[]
-  favoriteProducts Product[] @relation("UserFavoriteProducts", references: [id])
+  googleId           String?
+  facebookId         String?
+  githubId           String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  diet               String?
+  allergy            String[]
+  dislike            String[]
+  dishes             Dish[]
+  favoriteDishIds    String[]  @db.ObjectId
+  favoriteDishes     Dish[]    @relation("UserFavoriteDishes", fields: [favoriteDishIds], references: [id])
+  products           Product[]
+  favoriteProductIds String[]  @db.ObjectId
+  favoriteProducts   Product[] @relation("UserFavoriteProducts", fields: [favoriteProductIds], references: [id])
 }
