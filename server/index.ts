@@ -77,7 +77,7 @@ const startServer = async () => {
 		})
 	);
 
-	const PORT = process.env.PORT || 4000;
+	const PORT = parseInt(process.env.PORT || '4000', 10);
 
 	await new Promise<void>((resolve) =>
 		httpServer.listen({ port: PORT }, resolve)
