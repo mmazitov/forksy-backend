@@ -17,6 +17,7 @@ export const typeDefs = gql`
 		createdAt: String!
 		updatedAt: String!
 		favoriteProducts: [Product!]!
+		favoriteDishes: [Dish!]!
 	}
 
 	type Product {
@@ -28,6 +29,27 @@ export const typeDefs = gql`
 		fat: Float
 		carbs: Float
 		protein: Float
+		description: String
+		createdAt: String!
+		updatedAt: String!
+		userId: ID!
+		isFavorite: Boolean
+	}
+
+	type Dish {
+		id: ID!
+		name: String!
+		category: String
+		imageUrl: String
+		ingredients: [String!]!
+		instructions: [String!]!
+		cookTime: Int
+		calories: Int
+		fat: Float
+		carbs: Float
+		protein: Float
+		portionSize: Int
+		notes: String
 		description: String
 		createdAt: String!
 		updatedAt: String!
@@ -50,6 +72,7 @@ export const typeDefs = gql`
 			offset: Int
 		): [Product!]!
 		favoriteProducts: [Product!]!
+		favoriteDishes: [Dish!]!
 	}
 
 	type Mutation {
@@ -84,9 +107,43 @@ export const typeDefs = gql`
 			protein: Float
 			description: String
 		): Product!
-		addToFavorites(productId: ID!): User!
-		removeFromFavorites(productId: ID!): User!
+		addToFavoritesProductProduct(productId: ID!): User!
+		removeFromFavoritesProduct(productId: ID!): User!
 		deleteProduct(id: ID!): Product!
+		createDish(
+			name: String!
+			category: String
+			imageUrl: String
+			ingredients: [String!]!
+			instructions: [String!]!
+			cookTime: Int
+			calories: Int
+			fat: Float
+			carbs: Float
+			protein: Float
+			portionSize: Int
+			notes: String
+			description: String
+		): Dish!
+		updateDish(
+			id: ID!
+			name: String
+			category: String
+			imageUrl: String
+			ingredients: [String!]
+			instructions: [String!]
+			cookTime: Int
+			calories: Int
+			fat: Float
+			carbs: Float
+			protein: Float
+			portionSize: Int
+			notes: String
+			description: String
+		): Dish!
+		addToFavoritesDish(dishId: ID!): User!
+		removeFromFavoritesDish(dishId: ID!): User!
+		deleteDish(id: ID!): Dish!
 	}
 
 	type SocialAuthPayload {

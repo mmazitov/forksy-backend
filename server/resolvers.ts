@@ -274,7 +274,7 @@ export const resolvers = {
 
 			return product;
 		},
-		addToFavorites: async (
+		addToFavoritesProduct: async (
 			_parent: unknown,
 			args: { productId: string },
 			context: Context,
