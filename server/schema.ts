@@ -40,16 +40,12 @@ export const typeDefs = gql`
 		id: ID!
 		name: String!
 		category: String
-		imageUrl: String
+		image: String
 		ingredients: [String!]!
 		instructions: [String!]!
-		cookTime: Int
+		prepTime: Int
+		servings: Int
 		calories: Int
-		fat: Float
-		carbs: Float
-		protein: Float
-		portionSize: Int
-		notes: String
 		description: String
 		createdAt: String!
 		updatedAt: String!
@@ -71,6 +67,13 @@ export const typeDefs = gql`
 			limit: Int
 			offset: Int
 		): [Product!]!
+		dish(id: ID!): Dish
+		dishes(
+			category: String
+			search: String
+			limit: Int
+			offset: Int
+		): [Dish!]!
 		favoriteProducts: [Product!]!
 		favoriteDishes: [Dish!]!
 	}
@@ -107,38 +110,30 @@ export const typeDefs = gql`
 			protein: Float
 			description: String
 		): Product!
-		addToFavoritesProductProduct(productId: ID!): User!
+		addToFavoritesProduct(productId: ID!): User!
 		removeFromFavoritesProduct(productId: ID!): User!
 		deleteProduct(id: ID!): Product!
 		createDish(
 			name: String!
 			category: String
-			imageUrl: String
+			image: String
 			ingredients: [String!]!
 			instructions: [String!]!
-			cookTime: Int
+			prepTime: Int
+			servings: Int
 			calories: Int
-			fat: Float
-			carbs: Float
-			protein: Float
-			portionSize: Int
-			notes: String
 			description: String
 		): Dish!
 		updateDish(
 			id: ID!
 			name: String
 			category: String
-			imageUrl: String
+			image: String
 			ingredients: [String!]
 			instructions: [String!]
-			cookTime: Int
+			prepTime: Int
+			servings: Int
 			calories: Int
-			fat: Float
-			carbs: Float
-			protein: Float
-			portionSize: Int
-			notes: String
 			description: String
 		): Dish!
 		addToFavoritesDish(dishId: ID!): User!

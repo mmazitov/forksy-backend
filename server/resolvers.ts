@@ -82,6 +82,61 @@ export const resolvers = {
 
 			return user?.favoriteProducts || [];
 		},
+		dish: async (_parent: unknown, args: { id: string }, context: Context) => {
+			const dish = await context.prisma.dish.findUnique({
+				where: { id: args.id },
+			});
+
+			return dish;
+		},
+		dishes: async (
+			_parent: unknown,
+			args: {
+				category?: string;
+				search?: string;
+				limit?: number;
+				offset?: number;
+				userId?: string;
+			},
+			context: Context,
+		) => {
+			const dishes = await context.prisma.dish.findMany({
+				where: {
+					...(args.category && { category: args.category }),
+					...(args.search && {
+						name: { contains: args.search, mode: 'insensitive' },
+					}),
+					...(args.userId && { userId: args.userId }),
+				},
+				take: args.limit,
+				skip: args.offset || 0,
+				orderBy: { createdAt: 'desc' },
+			});
+
+			return dishes;
+		},
+		favoriteDishes: async (
+			_parent: unknown,
+			_args: unknown,
+			context: Context,
+		) => {
+			if (!context.userId) {
+				throw new Error('Not authenticated');
+			}
+
+			const user = await context.prisma.user.findUnique({
+				where: { id: context.userId },
+				include: {
+					favoriteDishes: {
+						orderBy: {
+							createdAt: 'desc',
+						},
+					},
+				},
+			});
+
+			return user?.favoriteDishes || [];
+		},
 	},
 	Mutation: {
 		register: async (
@@ -305,7 +360,7 @@ export const resolvers = {
 
 			return user;
 		},
-		removeFromFavorites: async (
+		removeFromFavoritesProduct: async (
 			_parent: unknown,
 			args: { productId: string },
 			context: Context,
@@ -328,6 +383,174 @@ export const resolvers = {
 
 			return user;
 		},
+		createDish: async (
+			_parent: unknown,
+			args: {
+				name: string;
+				category?: string;
+				image?: string;
+				ingredients: string[];
+				instructions: string[];
+				prepTime?: number;
+				servings?: number;
+				calories?: number;
+				description?: string;
+			},
+			context: Context,
+		) => {
+			if (!context.userId) {
+				throw new Error('Not authenticated');
+			}
+
+			const dish = await context.prisma.dish.create({
+				data: {
+					name: args.name,
+					category: args.category,
+					image: args.image,
+					ingredients: args.ingredients,
+					instructions: args.instructions,
+					prepTime: args.prepTime,
+					servings: args.servings,
+					calories: args.calories,
+					description: args.description,
+					userId: context.userId,
+				},
+			});
+
+			return dish;
+		},
+		updateDish: async (
+			_parent: unknown,
+			args: {
+				id: string;
+				name?: string;
+				category?: string;
+				image?: string;
+				ingredients?: string[];
+				instructions?: string[];
+				prepTime?: number;
+				servings?: number;
+				calories?: number;
+				description?: string;
+			},
+			context: Context,
+		) => {
+			if (!context.userId) {
+				throw new Error('Not authenticated');
+			}
+
+			const existing = await context.prisma.dish.findUnique({
+				where: { id: args.id },
+			});
+
+			if (!existing) {
+				throw new Error('Dish not found');
+			}
+
+			const userIsAdmin = await isAdmin(context.userId, context.prisma);
+			if (existing.userId !== context.userId && !userIsAdmin) {
+				throw new Error('Not authorized to edit this dish');
+			}
+
+			const dish = await context.prisma.dish.update({
+				where: { id: args.id },
+				data: {
+					...(args.name !== undefined && { name: args.name }),
+					...(args.category !== undefined && { category: args.category }),
+					...(args.image !== undefined && { image: args.image }),
+					...(args.ingredients !== undefined && { ingredients: args.ingredients }),
+					...(args.instructions !== undefined && { instructions: args.instructions }),
+					...(args.prepTime !== undefined && { prepTime: args.prepTime }),
+					...(args.servings !== undefined && { servings: args.servings }),
+					...(args.calories !== undefined && { calories: args.calories }),
+					...(args.description !== undefined && { description: args.description }),
+				},
+			});
+
+			return dish;
+		},
+		deleteDish: async (
+			_parent: unknown,
+			args: { id: string },
+			context: Context,
+		) => {
+			if (!context.userId) {
+				throw new Error('Not authenticated');
+			}
+
+			const existing = await context.prisma.dish.findUnique({
+				where: { id: args.id },
+			});
+
+			if (!existing) {
+				throw new Error('Dish not found');
+			}
+
+			const userIsAdmin = await isAdmin(context.userId, context.prisma);
+			if (existing.userId !== context.userId && !userIsAdmin) {
+				throw new Error('Not authorized to delete this dish');
+			}
+
+			const dish = await context.prisma.dish.delete({
+				where: { id: args.id },
+			});
+
+			return dish;
+		},
+		addToFavoritesDish: async (
+			_parent: unknown,
+			args: { dishId: string },
+			context: Context,
+		) => {
+			if (!context.userId) {
+				throw new Error('Not authenticated');
+			}
+
+			const dish = await context.prisma.dish.findUnique({
+				where: { id: args.dishId },
+			});
+
+			if (!dish) {
+				throw new Error('Dish not found');
+			}
+
+			const user = await context.prisma.user.update({
+				where: { id: context.userId },
+				data: {
+					favoriteDishes: {
+						connect: { id: args.dishId },
+					},
+				},
+				include: {
+					favoriteDishes: true,
+				},
+			});
+
+			return user;
+		},
+		removeFromFavoritesDish: async (
+			_parent: unknown,
+			args: { dishId: string },
+			context: Context,
+		) => {
+			if (!context.userId) {
+				throw new Error('Not authenticated');
+			}
+
+			const user = await context.prisma.user.update({
+				where: { id: context.userId },
+				data: {
+					favoriteDishes: {
+						disconnect: { id: args.dishId },
+					},
+				},
+				include: {
+					favoriteDishes: true,
+				},
+			});
+
+			return user;
+		},
 	},
 	Product: {
 		isFavorite: async (parent: { id: string }, _args: unknown, context: Context) => {
@@ -345,6 +568,24 @@ export const resolvers = {
 			});
 
 			return user?.favoriteProducts.length ? true : false;
+		},
+	},
+	Dish: {
+		isFavorite: async (parent: { id: string }, _args: unknown, context: Context) => {
+			if (!context.userId) {
+				return false;
+			}
+
+			const user = await context.prisma.user.findUnique({
+				where: { id: context.userId },
+				include: {
+					favoriteDishes: {
+						where: { id: parent.id },
+					},
+				},
+			});
+
+			return user?.favoriteDishes.length ? true : false;
 		},
 	},
 };
