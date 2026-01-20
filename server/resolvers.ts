@@ -388,7 +388,7 @@ export const resolvers = {
 			args: {
 				name: string;
 				category?: string;
-				image?: string;
+				imageUrl?: string;
 				ingredients: string[];
 				instructions: string[];
 				prepTime?: number;
@@ -406,7 +406,7 @@ export const resolvers = {
 				data: {
 					name: args.name,
 					category: args.category,
-					image: args.image,
+					imageUrl: args.imageUrl,
 					ingredients: args.ingredients,
 					instructions: args.instructions,
 					prepTime: args.prepTime,
@@ -425,7 +425,7 @@ export const resolvers = {
 				id: string;
 				name?: string;
 				category?: string;
-				image?: string;
+				imageUrl?: string;
 				ingredients?: string[];
 				instructions?: string[];
 				prepTime?: number;
@@ -457,7 +457,7 @@ export const resolvers = {
 				data: {
 					...(args.name !== undefined && { name: args.name }),
 					...(args.category !== undefined && { category: args.category }),
-					...(args.image !== undefined && { image: args.image }),
+					...(args.imageUrl !== undefined && { imageUrl: args.imageUrl }),
 					...(args.ingredients !== undefined && { ingredients: args.ingredients }),
 					...(args.instructions !== undefined && { instructions: args.instructions }),
 					...(args.prepTime !== undefined && { prepTime: args.prepTime }),

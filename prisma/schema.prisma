@@ -14,7 +14,7 @@ model Dish {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   name          String
   description   String?
-  image         String?
+  imageUrl      String?
   category      String?
   prepTime      Int?
   servings      Int?

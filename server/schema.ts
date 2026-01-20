@@ -40,7 +40,7 @@ export const typeDefs = gql`
 		id: ID!
 		name: String!
 		category: String
-		image: String
+		imageUrl: String
 		ingredients: [String!]!
 		instructions: [String!]!
 		prepTime: Int
@@ -116,7 +116,7 @@ export const typeDefs = gql`
 		createDish(
 			name: String!
 			category: String
-			image: String
+			imageUrl: String
 			ingredients: [String!]!
 			instructions: [String!]!
 			prepTime: Int
@@ -128,11 +128,11 @@ export const typeDefs = gql`
 			id: ID!
 			name: String
 			category: String
-			image: String
+			imageUrl: String
 			ingredients: [String!]
 			instructions: [String!]
 			prepTime: Int
-			servings: Int
+			servings: Int	
 			calories: Int
 			description: String
 		): Dish!
