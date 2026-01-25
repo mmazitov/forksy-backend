@@ -389,7 +389,7 @@ export const resolvers = {
 				name: string;
 				category?: string;
 				imageUrl?: string;
-				ingredients: string[];
+				ingredients: { name: string; amount: string }[];
 				instructions: string[];
 				prepTime?: number;
 				servings?: number;
@@ -432,7 +432,7 @@ export const resolvers = {
 				name?: string;
 				category?: string;
 				imageUrl?: string;
-				ingredients?: string[];
+				ingredients?: { name: string; amount: string }[];
 				instructions?: string[];
 				prepTime?: number;
 				servings?: number;

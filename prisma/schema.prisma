@@ -10,8 +10,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+type Ingredient {
+  name   String
+  amount String
+}
+
 model Dish {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
   name          String
   description   String?
   imageUrl      String?
@@ -22,7 +27,7 @@ model Dish {
   protein       Float?
   fat           Float?
   carbs         Float?
-  ingredients   String[]
+  ingredients   Ingredient[]
   instructions  String[]
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt

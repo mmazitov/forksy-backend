@@ -36,12 +36,22 @@ export const typeDefs = gql`
 		isFavorite: Boolean
 	}
 
+	type Ingredient {
+		name: String!
+		amount: String!
+	}
+
+	input IngredientInput {
+		name: String!
+		amount: String!
+	}
+
 	type Dish {
 		id: ID!
 		name: String!
 		category: String
 		imageUrl: String
-		ingredients: [String!]!
+		ingredients: [Ingredient!]!
 		instructions: [String!]!
 		prepTime: Int
 		servings: Int
@@ -120,7 +130,7 @@ export const typeDefs = gql`
 			name: String!
 			category: String
 			imageUrl: String
-			ingredients: [String!]!
+			ingredients: [IngredientInput!]!
 			instructions: [String!]!
 			prepTime: Int
 			servings: Int
@@ -135,7 +145,7 @@ export const typeDefs = gql`
 			name: String
 			category: String
 			imageUrl: String
-			ingredients: [String!]
+			ingredients: [IngredientInput!]
 			instructions: [String!]
 			prepTime: Int
 			servings: Int
