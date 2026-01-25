@@ -394,6 +394,9 @@ export const resolvers = {
 				prepTime?: number;
 				servings?: number;
 				calories?: number;
+				protein?: number;
+				fat?: number;
+				carbs?: number;
 				description?: string;
 			},
 			context: Context,
@@ -412,6 +415,9 @@ export const resolvers = {
 					prepTime: args.prepTime,
 					servings: args.servings,
 					calories: args.calories,
+					protein: args.protein,
+					fat: args.fat,
+					carbs: args.carbs,
 					description: args.description,
 					userId: context.userId,
 				},
@@ -431,6 +437,9 @@ export const resolvers = {
 				prepTime?: number;
 				servings?: number;
 				calories?: number;
+				protein?: number;
+				fat?: number;
+				carbs?: number;
 				description?: string;
 			},
 			context: Context,
@@ -463,6 +472,9 @@ export const resolvers = {
 					...(args.prepTime !== undefined && { prepTime: args.prepTime }),
 					...(args.servings !== undefined && { servings: args.servings }),
 					...(args.calories !== undefined && { calories: args.calories }),
+					...(args.protein !== undefined && { protein: args.protein }),
+					...(args.fat !== undefined && { fat: args.fat }),
+					...(args.carbs !== undefined && { carbs: args.carbs }),
 					...(args.description !== undefined && { description: args.description }),
 				},
 			});

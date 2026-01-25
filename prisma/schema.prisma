@@ -19,6 +19,9 @@ model Dish {
   prepTime      Int?
   servings      Int?
   calories      Int?
+  protein       Float?
+  fat           Float?
+  carbs         Float?
   ingredients   String[]
   instructions  String[]
   createdAt     DateTime @default(now())

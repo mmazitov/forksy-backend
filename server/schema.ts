@@ -46,6 +46,9 @@ export const typeDefs = gql`
 		prepTime: Int
 		servings: Int
 		calories: Int
+		protein: Float
+		fat: Float
+		carbs: Float
 		description: String
 		createdAt: String!
 		updatedAt: String!
@@ -122,6 +125,9 @@ export const typeDefs = gql`
 			prepTime: Int
 			servings: Int
 			calories: Int
+			protein: Float
+			fat: Float
+			carbs: Float
 			description: String
 		): Dish!
 		updateDish(
@@ -132,8 +138,11 @@ export const typeDefs = gql`
 			ingredients: [String!]
 			instructions: [String!]
 			prepTime: Int
-			servings: Int	
+			servings: Int
 			calories: Int
+			protein: Float
+			fat: Float
+			carbs: Float
 			description: String
 		): Dish!
 		addToFavoritesDish(dishId: ID!): User!
