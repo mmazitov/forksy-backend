@@ -29,12 +29,12 @@ model Dish {
   carbs         Float?
   ingredients   Ingredient[]
   instructions  String[]
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  userId        String   @db.ObjectId
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  favoriteByIds String[] @db.ObjectId
-  favoriteBy    User[]   @relation("UserFavoriteDishes", fields: [favoriteByIds], references: [id])
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  userId        String       @db.ObjectId
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  favoriteByIds String[]     @db.ObjectId
+  favoriteBy    User[]       @relation("UserFavoriteDishes", fields: [favoriteByIds], references: [id])
 }
 
 model Product {
