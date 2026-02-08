@@ -19,12 +19,27 @@ const allowedOrigins = [
 	process.env.CLIENT_URL || 'http://localhost:5173',
 	'https://forksy.vercel.app',
 	'http://localhost:5173',
+	'http://localhost:5174',
+	/^https:\/\/.*\.vercel\.app$/,
 ];
 
-// Глобальні middleware
+
 app.use(
 	cors({
-		origin: allowedOrigins,
+		origin: (origin, callback) => {
+			if (!origin) return callback(null, true);
+			
+			for (const allowedOrigin of allowedOrigins) {
+				if (typeof allowedOrigin === 'string' && allowedOrigin === origin) {
+					return callback(null, true);
+				}
+				if (allowedOrigin instanceof RegExp && allowedOrigin.test(origin)) {
+					return callback(null, true);
+				}
+			}
+			
+			return callback(new Error('Not allowed by CORS'), false);
+		},
 		credentials: true,
 	})
 );
