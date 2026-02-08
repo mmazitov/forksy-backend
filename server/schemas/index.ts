@@ -1,11 +1,10 @@
 import { mergeTypeDefs } from '@graphql-tools/merge';
 import { gql } from 'graphql-tag';
 
-import { dishTypeDefs } from './dish';
-import { productTypeDefs } from './product';
-import { userTypeDefs } from './user';
+import { dishTypeDefs } from './dish.js';
+import { productTypeDefs } from './product.js';
+import { userTypeDefs } from './user.js';
 
-// Базовые типы Query и Mutation
 const baseTypeDefs = gql`
 	type Query {
 		_empty: String
