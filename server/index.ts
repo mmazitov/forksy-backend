@@ -6,7 +6,7 @@ import express, { json } from 'express';
 import session from 'express-session';
 import http from 'http';
 import passport from 'passport';
-import { createContext } from './context.js';
+import { Context, createContext } from './context.js';
 import oauthRouter from './oauth.js';
 import './passport/strategies.js';
 import { resolvers } from './resolvers.js';
@@ -61,7 +61,7 @@ app.get('/', (req, res) => {
 app.use('/auth', oauthRouter);
 
 // Apollo Server
-const server = new ApolloServer({
+const server = new ApolloServer<Context>({
 	typeDefs,
 	resolvers,
 	introspection: true, // Enable introspection for GraphQL codegen
