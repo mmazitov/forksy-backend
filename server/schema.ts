@@ -1,1 +1,1 @@
-export { typeDefs } from './schemas';
+export { typeDefs } from './schemas/index.js';
