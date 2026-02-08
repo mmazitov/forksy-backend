@@ -5,6 +5,20 @@ import { Context } from '../context.js';
 import { JWT_SECRET, requireAuth } from './utils.js';
 
 export const userResolvers = {
+	User: {
+		favoriteProducts: async (parent: any, _args: unknown, context: Context) => {
+			return await context.prisma.user.findUnique({
+				where: { id: parent.id },
+				select: { favoriteProducts: true }
+			}).then(user => user?.favoriteProducts || []);
+		},
+		favoriteDishes: async (parent: any, _args: unknown, context: Context) => {
+			return await context.prisma.user.findUnique({
+				where: { id: parent.id },
+				select: { favoriteDishes: true }
+			}).then(user => user?.favoriteDishes || []);
+		},
+	},
 	Query: {
 		me: async (_parent: unknown, _args: unknown, context: Context) => {
 			const userId = requireAuth(context);
