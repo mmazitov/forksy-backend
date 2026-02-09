@@ -19,6 +19,7 @@ export const productTypeDefs = gql`
 
 	extend type Query {
 		product(id: ID!): Product
+		productByName(name: String!): Product
 		products(
 			category: String
 			search: String

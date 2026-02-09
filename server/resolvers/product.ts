@@ -14,6 +14,22 @@ export const productResolvers = {
 
 			return product;
 		},
+		productByName: async (
+			_parent: unknown,
+			args: { name: string },
+			context: Context,
+		) => {
+			const product = await context.prisma.product.findFirst({
+				where: { 
+					name: {
+						equals: args.name,
+						mode: 'insensitive'
+					}
+				},
+			});
+
+			return product;
+		},
 		products: async (
 			_parent: unknown,
 			args: {

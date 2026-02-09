@@ -10,6 +10,22 @@ export const dishResolvers = {
 
 			return dish;
 		},
+		dishByName: async (
+			_parent: unknown, 
+			args: { name: string }, 
+			context: Context
+		) => {
+			const dish = await context.prisma.dish.findFirst({
+				where: { 
+					name: {
+						equals: args.name,
+						mode: 'insensitive'
+					}
+				},
+			});
+
+			return dish;
+		},
 		dishes: async (
 			_parent: unknown,
 			args: {

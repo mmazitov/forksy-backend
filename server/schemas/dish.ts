@@ -33,6 +33,7 @@ export const dishTypeDefs = gql`
 
 	extend type Query {
 		dish(id: ID!): Dish
+		dishByName(name: String!): Dish
 		dishes(
 			category: String
 			search: String
