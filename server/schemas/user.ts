@@ -18,6 +18,8 @@ export const userTypeDefs = gql`
 		updatedAt: String!
 		favoriteProducts: [Product!]!
 		favoriteDishes: [Dish!]!
+		dishesCount: Int!
+		productsCount: Int!
 	}
 
 	type AuthPayload {

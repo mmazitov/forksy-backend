@@ -18,6 +18,8 @@ export const userResolvers = {
 				select: { favoriteDishes: true }
 			}).then(user => user?.favoriteDishes || []);
 		},
+		dishesCount: (parent: any) => parent._count?.dishes ?? 0,
+		productsCount: (parent: any) => parent._count?.products ?? 0,
 	},
 	Query: {
 		me: async (_parent: unknown, _args: unknown, context: Context) => {
@@ -25,6 +27,7 @@ export const userResolvers = {
 
 			const user = await context.prisma.user.findUnique({
 				where: { id: userId },
+				include: { _count: { select: { dishes: true, products: true } } },
 			});
 
 			return user;
