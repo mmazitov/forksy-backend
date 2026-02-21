@@ -45,6 +45,7 @@ export const userTypeDefs = gql`
 			allergy: [String!]
 			dislike: [String!]
 		): User!
+		changePassword(currentPassword: String!, newPassword: String!): Boolean!
 		handleOAuthCallback(provider: String!, code: String!): SocialAuthPayload!
 	}
 `;

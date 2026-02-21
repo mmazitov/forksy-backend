@@ -136,6 +136,34 @@ export const userResolvers = {
 
 			return user;
 		},
+		changePassword: async (
+			_parent: unknown,
+			args: { currentPassword: string; newPassword: string },
+			context: Context,
+		) => {
+			const userId = requireAuth(context);
+
+			const user = await context.prisma.user.findUnique({
+				where: { id: userId },
+			});
+
+			if (!user?.password) {
+				throw new Error('Password change is not available for OAuth accounts');
+			}
+
+			const isValid = await bcrypt.compare(args.currentPassword, user.password);
+			if (!isValid) {
+				throw new Error('Current password is incorrect');
+			}
+
+			const hashedPassword = await bcrypt.hash(args.newPassword, 10);
+			await context.prisma.user.update({
+				where: { id: userId },
+				data: { password: hashedPassword },
+			});
+
+			return true;
+		},
 		addToFavoritesProduct: async (
 			_parent: unknown,
 			args: { productId: string },
