@@ -3,7 +3,9 @@ import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHt
 import { expressMiddleware } from '@as-integrations/express4';
 import cors from 'cors';
 import express, { json } from 'express';
+import rateLimit from 'express-rate-limit';
 import session from 'express-session';
+import depthLimit from 'graphql-depth-limit';
 import http from 'http';
 import passport from 'passport';
 import { Context, createContext } from './context.js';
@@ -23,7 +25,16 @@ const allowedOrigins = [
 	/^https:\/\/.*\.vercel\.app$/,
 ];
 
+// Global Rate Limiter
+const apiLimiter = rateLimit({
+	windowMs: 15 * 60 * 1000,       // 15 minutes window
+	max: 1000,                      // Limit each IP to 1000 requests per `window`
+	standardHeaders: true,          // Return rate limit info in the `RateLimit-*` headers
+	legacyHeaders: false,           // Disable the `X-RateLimit-*` headers
+	message: 'Too many requests from this IP, please try again later.',
+});
 
+app.use(apiLimiter);
 app.use(
 	cors({
 		origin: (origin, callback) => {
@@ -81,6 +92,7 @@ const server = new ApolloServer<Context>({
 	resolvers,
 	introspection: true, // Enable introspection for GraphQL codegen
 	plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+	validationRules: [depthLimit(7)],
 });
 
 const startServer = async () => {
