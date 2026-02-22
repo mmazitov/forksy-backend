@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
 export const prisma = new PrismaClient();
@@ -6,10 +7,13 @@ export const prisma = new PrismaClient();
 export interface Context {
 	prisma: PrismaClient;
 	userId?: string;
+	req: Request;
+	res: Response;
 }
 
 export const createContext = async (contextArg?: any): Promise<Context> => {
 	const req = contextArg?.req || contextArg;
+	const res = contextArg?.res;
 	const headers = req?.headers || {};
 
 	let token = '';
@@ -38,5 +42,7 @@ export const createContext = async (contextArg?: any): Promise<Context> => {
 	return {
 		prisma,
 		userId,
+		req,
+		res,
 	};
 };

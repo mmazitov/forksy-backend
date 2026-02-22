@@ -82,14 +82,26 @@ export const userResolvers = {
 			});
 
 			const token = jwt.sign({ userId: user.id }, JWT_SECRET, {
+				expiresIn: '15m',
+			});
+
+			const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET || JWT_SECRET;
+			const refreshToken = jwt.sign({ userId: user.id }, refreshTokenSecret, {
 				expiresIn: '30d',
+			});
+
+			context.res.cookie('refreshToken', refreshToken, {
+				httpOnly: true,
+				secure: process.env.NODE_ENV === 'production',
+				sameSite: 'lax',
+				maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
 			});
 
 			return { token, user };
 		},
 		login: async (
 			_parent: unknown,
-			args: { email: string; password: string },
+			args: { email: string; password: string; rememberMe?: boolean },
 			context: Context,
 		) => {
 			const user = await context.prisma.user.findUnique({
@@ -106,10 +118,61 @@ export const userResolvers = {
 			}
 
 			const token = jwt.sign({ userId: user.id }, JWT_SECRET, {
-				expiresIn: '30d',
+				expiresIn: '15m',
+			});
+
+			const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET || JWT_SECRET;
+			const refreshToken = jwt.sign({ userId: user.id }, refreshTokenSecret, {
+				expiresIn: args.rememberMe ? '30d' : '1d',
+			});
+
+			// If rememberMe = false, it can be a session cookie, but for safety providing a maxAge of 1 day is okay too.
+			context.res.cookie('refreshToken', refreshToken, {
+				httpOnly: true,
+				secure: process.env.NODE_ENV === 'production',
+				sameSite: 'lax',
+				maxAge: args.rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined,
 			});
 
 			return { token, user };
+		},
+		refreshToken: async (
+			_parent: unknown,
+			_args: unknown,
+			context: Context,
+		) => {
+			const tokenContext = context.req.cookies?.refreshToken;
+
+			if (!tokenContext) {
+				throw new Error('No refresh token found');
+			}
+
+			try {
+				const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET || JWT_SECRET;
+				const decoded = jwt.verify(tokenContext, refreshTokenSecret) as { userId: string };
+
+				const user = await context.prisma.user.findUnique({
+					where: { id: decoded.userId },
+				});
+
+				if (!user) {
+					throw new Error('User not found');
+				}
+
+				const newAccessToken = jwt.sign({ userId: user.id }, JWT_SECRET, {
+					expiresIn: '15m',
+				});
+
+				// Optionally rotate refresh token here if desired
+				// const newRefreshToken = jwt.sign({ userId: user.id }, refreshTokenSecret, { expiresIn: '30d' });
+				// context.res.cookie('refreshToken', newRefreshToken, { ... });
+
+				return { token: newAccessToken, user };
+			} catch (e) {
+				// Clear the invalid cookie
+				context.res.clearCookie('refreshToken');
+				throw new Error('Invalid refresh token');
+			}
 		},
 		updateProfile: async (
 			_parent: unknown,

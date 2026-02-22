@@ -1,6 +1,7 @@
 import { ApolloServer } from '@apollo/server';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { expressMiddleware } from '@as-integrations/express4';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express, { json } from 'express';
 import rateLimit from 'express-rate-limit';
@@ -55,6 +56,7 @@ app.use(
 	})
 );
 app.use(json());
+app.use(cookieParser());
 
 // Session для Passport
 app.use(
@@ -101,7 +103,7 @@ const startServer = async () => {
 	app.use(
 		'/graphql',
 		expressMiddleware(server, {
-			context: async ({ req }) => createContext({ req }),
+			context: async ({ req, res }) => createContext({ req, res }),
 		})
 	);
 
