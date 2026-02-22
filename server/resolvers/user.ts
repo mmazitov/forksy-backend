@@ -82,10 +82,14 @@ export const userResolvers = {
 			});
 
 			const token = jwt.sign({ userId: user.id }, JWT_SECRET, {
+				expiresIn: '15m',
+			});
+
+			const refreshToken = jwt.sign({ userId: user.id }, JWT_SECRET, {
 				expiresIn: '30d',
 			});
 
-			return { token, user };
+			return { token, refreshToken, user };
 		},
 		login: async (
 			_parent: unknown,
@@ -106,10 +110,42 @@ export const userResolvers = {
 			}
 
 			const token = jwt.sign({ userId: user.id }, JWT_SECRET, {
+				expiresIn: '15m',
+			});
+
+			const refreshToken = jwt.sign({ userId: user.id }, JWT_SECRET, {
 				expiresIn: '30d',
 			});
 
-			return { token, user };
+			return { token, refreshToken, user };
+		},
+		refreshToken: async (
+			_parent: unknown,
+			args: { token: string },
+			context: Context,
+		) => {
+			try {
+				const decoded = jwt.verify(args.token, JWT_SECRET) as { userId: string };
+				const user = await context.prisma.user.findUnique({
+					where: { id: decoded.userId },
+				});
+
+				if (!user) {
+					throw new Error('User not found');
+				}
+
+				const token = jwt.sign({ userId: user.id }, JWT_SECRET, {
+					expiresIn: '15m',
+				});
+
+				const newRefreshToken = jwt.sign({ userId: user.id }, JWT_SECRET, {
+					expiresIn: '30d',
+				});
+
+				return { token, refreshToken: newRefreshToken, user };
+			} catch (err) {
+				throw new Error('Invalid or expired refresh token');
+			}
 		},
 		updateProfile: async (
 			_parent: unknown,
@@ -265,10 +301,14 @@ export const userResolvers = {
 						}
 
 						const token = jwt.sign({ userId: user.id }, JWT_SECRET, {
-							expiresIn: '7d',
+							expiresIn: '15m',
 						});
 
-						resolve({ token, user });
+						const refreshToken = jwt.sign({ userId: user.id }, JWT_SECRET, {
+							expiresIn: '30d',
+						});
+
+						resolve({ token, refreshToken, user });
 					},
 				)(req, res, next);
 			});

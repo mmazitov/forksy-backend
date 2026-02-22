@@ -24,11 +24,13 @@ export const userTypeDefs = gql`
 
 	type AuthPayload {
 		token: String!
+		refreshToken: String!
 		user: User!
 	}
 
 	type SocialAuthPayload {
 		token: String!
+		refreshToken: String!
 		user: User!
 	}
 
@@ -48,6 +50,7 @@ export const userTypeDefs = gql`
 			dislike: [String!]
 		): User!
 		changePassword(currentPassword: String!, newPassword: String!): Boolean!
+		refreshToken(token: String!): AuthPayload!
 		handleOAuthCallback(provider: String!, code: String!): SocialAuthPayload!
 	}
 `;
