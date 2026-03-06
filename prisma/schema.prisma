@@ -35,6 +35,7 @@ model Dish {
   user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   favoriteByIds String[]     @db.ObjectId
   favoriteBy    User[]       @relation("UserFavoriteDishes", fields: [favoriteByIds], references: [id])
+  plannerItems  PlannerItem[]
 }
 
 model Product {
@@ -78,4 +79,16 @@ model User {
   products           Product[]
   favoriteProductIds String[]  @db.ObjectId
   favoriteProducts   Product[] @relation("UserFavoriteProducts", fields: [favoriteProductIds], references: [id])
+  plannerItems       PlannerItem[]
+}
+
+model PlannerItem {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dishId    String   @db.ObjectId
+  dish      Dish     @relation(fields: [dishId], references: [id])
+  day       String
+  mealTime  String
+  createdAt DateTime @default(now())
 }
